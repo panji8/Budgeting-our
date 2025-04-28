@@ -1,30 +1,69 @@
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbx5F6nsxHq9wzfrTpuy7KhKr23s-Q_sVi6PTNcfuJUMMmSRefgOws1MfH5_rXlZyj2Eug/exec';
-  const form = document.getElementById('financeForm');
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Keuangan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Form Pencatatan Keuangan</h1>
+    <form id="financeForm">
+      <label for="tanggal">Tanggal:</label>
+      <input type="date" id="tanggal" name="tanggal" required>
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
+      <label for="keterangan">Keterangan:</label>
+      <select id="keterangan" name="keterangan" required>
+        <option value="">--Pilih Keterangan--</option>
+        <option value="Pemasukan">Pemasukan</option>
+        <option value="Pengeluaran">Pengeluaran</option>
+        <option value="Saving">Saving</option>
+      </select>
 
-    const formData = {
-      tanggal: form.tanggal.value,
-      keterangan: form.keterangan.value,
-      note: form.note.value,
-      nominal: form.nominal.value
-    };
+      <label for="note">Note:</label>
+      <textarea id="note" name="note" placeholder="Catatan" required></textarea>
 
-    fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify(formData),
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(result => {
-      alert('Data berhasil dikirim!');
-      form.reset();
-    })
-    .catch(error => {
-      alert('Gagal mengirim data!');
-      console.error('Error!', error.message);
+      <label for="nominal">Nominal:</label>
+      <input type="number" id="nominal" name="nominal" placeholder="0" required>
+
+      <button type="submit">Kirim</button>
+    </form>
+
+    <div id="statusMessage"></div>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx5F6nsxHq9wzfrTpuy7KhKr23s-Q_sVi6PTNcfuJUMMmSRefgOws1MfH5_rXlZyj2Eug/exec';
+    const form = document.getElementById('financeForm');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      statusMessage.textContent = 'Mengirim data...';
+
+      const formData = {
+        tanggal: form.tanggal.value,
+        keterangan: form.keterangan.value,
+        note: form.note.value,
+        nominal: form.nominal.value
+      };
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(result => {
+        statusMessage.textContent = 'Data berhasil dikirim!';
+        form.reset();
+      })
+      .catch(error => {
+        statusMessage.textContent = 'Gagal mengirim data.';
+        console.error('Error!', error.message);
+      });
     });
-  });
-</script>
+  </script>
+</body>
+</html>
